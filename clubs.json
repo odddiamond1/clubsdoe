@@ -1,0 +1,22 @@
+{
+  "book": {
+    "club": "Book Club",
+    "title": "Night Shift",
+    "selector": "Mike",
+    "author": "Stephen King",
+    "date": "June 15, 2023"
+  },
+  "movie": {
+    "club": "Movie Club",
+    "title": "Everything Everywhere All at Once",
+    "selector": "Michael Chen",
+    "date": "June 22, 2023"
+  },
+  "music": {
+    "club": "Music Club",
+    "title": "The Very Best of The Everly Brothers",
+    "artist": "The Everly Brothers",
+    "selector": "Sue",
+    "date": "June 29, 2023"
+  }
+}

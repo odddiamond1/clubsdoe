@@ -1,0 +1,553 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f5f2;
+        }
+        
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .book-card {
+            background: linear-gradient(135deg, #fff9f0 0%, #fff 100%);
+            border-left: 6px solid #d4a373;
+        }
+        
+        .movie-card {
+            background: linear-gradient(135deg, #f0f8ff 0%, #fff 100%);
+            border-left: 6px solid #4cc9f0;
+        }
+        
+        .music-card {
+            background: linear-gradient(135deg, #f9f0ff 0%, #fff 100%);
+            border-left: 6px solid #b5179e;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <h1 class="title-font text-4xl md:text-5xl font-bold text-center mb-2">Club Hub</h1>
+            <p class="text-center text-lg md:text-xl opacity-90">Where books, films, and music come together</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center space-x-6 py-4">
+                <a href="#" class="text-indigo-700 font-medium border-b-2 border-indigo-700 pb-1">Home</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-700 transition">Book Club</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-700 transition">Movie Club</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-700 transition">Music Club</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-700 transition">Past Picks</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <h2 class="title-font text-3xl font-bold text-center mb-12">Upcoming Club Meetings</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Book Club Card -->
+            <div class="book-card rounded-lg shadow-md p-6 transition duration-300 card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-block mb-2">Book Club</div>
+                        <h3 class="title-font text-2xl font-bold mb-1" id="book-title">Loading...</h3>
+                        <p class="text-gray-600">Selected by: <span class="font-medium" id="book-selector">Loading...</span></p>
+                    </div>
+                    <div class="text-amber-600 text-2xl"><i class="fas fa-book-open"></i></div>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4 overflow-hidden" id="book-cover-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600"><span id="book-author">Author: Loading...</span></p>
+                        <p class="text-sm text-gray-600"><span id="book-pages">Pages: Loading...</span></p>
+                        <p class="text-sm text-gray-600"><span id="book-year">Year: Loading...</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-50 p-3 rounded-lg mb-4">
+                    <p class="text-sm text-gray-700" id="book-description">Loading description...</p>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-gray-500">Next Meeting</p>
+                        <p class="font-semibold text-indigo-700" id="book-date">June 15, 2023</p>
+                    </div>
+                    <button class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-full text-sm font-medium transition">
+                        Join Discussion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Movie Club Card -->
+            <div class="movie-card rounded-lg shadow-md p-6 transition duration-300 card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-block mb-2">Movie Club</div>
+                        <h3 class="title-font text-2xl font-bold mb-1" id="movie-title">Loading...</h3>
+                        <p class="text-gray-600">Selected by: <span class="font-medium" id="movie-selector">Loading...</span></p>
+                    </div>
+                    <div class="text-blue-600 text-2xl"><i class="fas fa-film"></i></div>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4 overflow-hidden" id="movie-poster-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600"><span id="movie-director">Director: Loading...</span></p>
+                        <p class="text-sm text-gray-600"><span id="movie-runtime">Runtime: Loading...</span></p>
+                        <p class="text-sm text-gray-600"><span id="movie-year">Year: Loading...</span></p>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-3 rounded-lg mb-4">
+                    <p class="text-sm text-gray-700" id="movie-plot">Loading plot...</p>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-gray-500">Next Meeting</p>
+                        <p class="font-semibold text-indigo-700" id="movie-date">June 22, 2023</p>
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition">
+                        Join Discussion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Music Club Card -->
+            <div class="music-card rounded-lg shadow-md p-6 transition duration-300 card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-block mb-2">Music Club</div>
+                        <h3 class="title-font text-2xl font-bold mb-1" id="music-title">Loading...</h3>
+                        <p class="text-gray-600">Selected by: <span class="font-medium" id="music-selector">Loading...</span></p>
+                    </div>
+                    <div class="text-purple-600 text-2xl"><i class="fas fa-music"></i></div>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4 overflow-hidden" id="music-cover-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600"><span id="music-artist">Artist: Loading...</span></p>
+                        <p class="text-sm text-gray-600"><span id="music-album">Album: Loading...</span></p>
+                        <!-- <p class="text-sm text-gray-600"><span id="music-year">Year: Loading...</span></p> -->
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 p-3 rounded-lg mb-4">
+                    <p class="text-sm text-gray-700" id="music-summary">Loading summary...</p>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-gray-500">Next Meeting</p>
+                        <p class="font-semibold text-indigo-700" id="music-date">June 29, 2023</p>
+                    </div>
+                    <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition">
+                        Join Discussion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upcoming Events Section -->
+    <section class="bg-gray-50 py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="title-font text-3xl font-bold text-center mb-8">Upcoming Events Calendar</h2>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                    <!-- Book Club Event -->
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-amber-100 text-amber-800 p-2 rounded-full mr-3">
+                                <i class="fas fa-book-open text-lg"></i>
+                            </div>
+                            <h3 class="title-font text-xl font-bold">Book Club</h3>
+                        </div>
+                        <p class="text-gray-600 mb-3"><span class="font-medium" id="book-next-title">Loading...</span></p>
+                        <p class="text-sm text-gray-500"><i class="far fa-calendar-alt mr-2"></i> <span id="book-next-date">Loading date...</span></p>
+                        <p class="text-sm text-gray-500 mb-4"><i class="far fa-clock mr-2"></i> 7:00 PM - 9:00 PM</p>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition">
+                            View Details →
+                        </button>
+                    </div>
+                    
+                    <!-- Movie Club Event -->
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 text-blue-800 p-2 rounded-full mr-3">
+                                <i class="fas fa-film text-lg"></i>
+                            </div>
+                            <h3 class="title-font text-xl font-bold">Movie Club</h3>
+                        </div>
+                        <p class="text-gray-600 mb-3"><span class="font-medium" id="movie-next-title">Loading...</span></p>
+                        <p class="text-sm text-gray-500"><i class="far fa-calendar-alt mr-2"></i> <span id="movie-next-date">Loading date...</span></p>
+                        <p class="text-sm text-gray-500 mb-4"><i class="far fa-clock mr-2"></i> 6:30 PM - 9:30 PM</p>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition">
+                            View Details →
+                        </button>
+                    </div>
+                    
+                    <!-- Music Club Event -->
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-purple-100 text-purple-800 p-2 rounded-full mr-3">
+                                <i class="fas fa-music text-lg"></i>
+                            </div>
+                            <h3 class="title-font text-xl font-bold">Music Club</h3>
+                        </div>
+                        <p class="text-gray-600 mb-3"><span class="font-medium" id="music-next-title">Loading...</span></p>
+                        <p class="text-sm text-gray-500"><i class="far fa-calendar-alt mr-2"></i> <span id="music-next-date">Loading date...</span></p>
+                        <p class="text-sm text-gray-500 mb-4"><i class="far fa-clock mr-2"></i> 7:30 PM - 10:00 PM</p>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition">
+                            View Details →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="title-font text-xl font-bold mb-4">Culture Club Hub</h3>
+                    <p class="text-gray-400">A community for lovers of books, films, and music to share and discuss their passions.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Clubs</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Book Club</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Movie Club</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Music Club</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Past Picks</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">How to Join</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Discussion Guidelines</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Suggest a Pick</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Connect</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition text-xl"><i class="fab fa-goodreads"></i></a>
+                    </div>
+                    <p class="text-gray-400">newsletter@cultureclubhub.com</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2023 Culture Club Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data - in a real app, this would come from your database
+        // let clubData = {};
+
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+       // Replace this with your actual SheetDB API endpoint
+        const sheetdbUrl = 'https://sheetdb.io/api/v1/ebdg1jebrc6wv';
+
+        // Optionally: You can filter or parse the data as needed
+        const response = await fetch(sheetdbUrl);
+        const rows = await response.json();
+        // Transform the flat rows into the object structure you need:
+        clubData = sheetRowsToClubData(rows);
+        populateClubData();
+
+    } catch (err) {
+        console.error("Error loading club data:", err);
+    }
+});
+
+    function sheetRowsToClubData(rows) {
+    // rows is an array of objects, each representing a row in your sheet
+    let obj = {
+        book: {},
+        movie: {},
+        music: {}
+    };
+    rows.forEach(row => {
+        if (row.type === "book") obj.book = row;
+        if (row.type === "movie") obj.movie = row;
+        if (row.type === "music") obj.music = row;
+    });
+    return obj;
+}
+     function populateClubData() {
+    // Book
+    document.getElementById('book-title').textContent = clubData.book.title;
+    document.getElementById('book-selector').textContent = clubData.book.selector;
+    document.getElementById('book-date').textContent = clubData.book.date;
+    document.getElementById('book-next-title').textContent = clubData.book.title;
+    document.getElementById('book-next-date').textContent = clubData.book.date;
+
+    // Movie
+    document.getElementById('movie-title').textContent = clubData.movie.title;
+    document.getElementById('movie-selector').textContent = clubData.movie.selector;
+    document.getElementById('movie-date').textContent = clubData.movie.date;
+    document.getElementById('movie-next-title').textContent = clubData.movie.title;
+    document.getElementById('movie-next-date').textContent = clubData.movie.date;
+
+    // Music
+    document.getElementById('music-title').textContent = clubData.music.title;
+    document.getElementById('music-selector').textContent = clubData.music.selector;
+    document.getElementById('music-date').textContent = clubData.music.date;
+    document.getElementById('music-next-title').textContent = `${clubData.music.title} by ${clubData.music.artist}`;
+    document.getElementById('music-next-date').textContent = clubData.music.date;
+
+    // Optionally pass artist to API calls
+    fetchBookData(clubData.book.title);
+    fetchMovieData(clubData.movie.title);
+    fetchMusicData(clubData.music.title, clubData.music.artist);
+        };
+
+       
+    async function fetchBookData(title) {
+        try {
+            const response = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}`);
+            const data = await response.json();
+
+            if (!data.docs || data.docs.length === 0) return;
+
+            const book = data.docs[0]; // Best match
+
+            document.getElementById('book-author').textContent = `Author: ${book.author_name?.[0] || 'Unknown'}`;
+            document.getElementById('book-pages').textContent = `Pages: ${book.number_of_pages_median || 'N/A'}`;
+            document.getElementById('book-year').textContent = `Year: ${book.first_publish_year || 'N/A'}`;
+
+            if (book.cover_i) {
+                const img = document.createElement('img');
+                img.src = `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`;
+                img.alt = `${title} cover`;
+                img.className = 'w-full h-full object-cover';
+                const container = document.getElementById('book-cover-container');
+                container.innerHTML = '';
+                container.appendChild(img);
+            }
+
+            // Optional: try to fetch description
+            const workKey = book.key;
+            const descRes = await fetch(`https://openlibrary.org${workKey}.json`);
+            const descData = await descRes.json();
+            const descText = descData.description?.value || descData.description || 'No description available.';
+            const maxLength = 250;
+            const shortDesc = descText.length > maxLength
+                ? descText.slice(0, maxLength).trim() + '...'
+                : descText;
+            document.getElementById('book-description').textContent = shortDesc;
+
+
+        } catch (err) {
+            console.error("Book API error:", err);
+        }
+    }
+
+
+        // Function to fetch movie data from OMDb API
+        async function fetchMovieData(title) {
+            try {
+                // Note: In a real app, you would need to sign up for an API key
+                const response = await fetch(`https://www.omdbapi.com/?apikey=7d308091&t=${encodeURIComponent(title)}`); // Using demo key
+                const data = await response.json();
+                
+                if (data.Response === 'True') {
+                    document.getElementById('movie-director').textContent = `Director: ${data.Director || 'Unknown'}`;
+                    document.getElementById('movie-runtime').textContent = `Runtime: ${data.Runtime || 'N/A'}`;
+                    document.getElementById('movie-year').textContent = `Year: ${data.Year || 'N/A'}`;
+                    document.getElementById('movie-plot').textContent = data.Plot || 'No plot available.';
+                    
+                    if (data.Poster && data.Poster !== 'N/A') {
+                        const img = document.createElement('img');
+                        img.src = data.Poster;
+                        img.alt = `${data.Title} poster`;
+                        img.className = 'w-full h-full object-cover';
+                        document.getElementById('movie-poster-container').innerHTML = '';
+                        document.getElementById('movie-poster-container').appendChild(img);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching movie data:', error);
+            }
+        }
+
+        async function fetchMusicData(albumTitle, artist) {
+    try {
+        const apiKey = '86e98f1783dd1af823523204bb2e2b4a';
+        const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(albumTitle)}&format=json`);
+        const data = await response.json();
+
+        if (!data || !data.album) {
+            console.warn('No album data found');
+            return;
+        }
+
+        const album = data.album;
+
+        document.getElementById('music-album').textContent = `Album: ${album.name || 'N/A'}`;
+        document.getElementById('music-artist').textContent = `Artist: ${album.artist || 'N/A'}`;
+        //document.getElementById('music-release').textContent = `Release Date: N/A`; // Last.fm doesn’t expose it
+
+        // Description
+        const summary = album.wiki?.summary || "No description available.";
+        const maxLength = 250;
+        const shortSummary = summary.length > maxLength ? summary.slice(0, maxLength).trim() + '...' : summary;
+        document.getElementById('music-summary').innerHTML = shortSummary;
+
+        // Album Art
+        const desiredSizes = ["extralarge", "large", "medium"];
+        let albumImageUrl = "";
+
+        for (const size of desiredSizes) {
+            const match = album.image.find(img => img.size === size && img['#text']);
+            if (match) {
+                albumImageUrl = match['#text'];
+                break;
+            }
+        }
+
+        const container = document.getElementById('music-cover-container');
+        if (albumImageUrl && container) {
+            const img = document.createElement('img');
+            img.src = albumImageUrl;
+            img.alt = `${album.name} cover`;
+            img.className = 'w-full h-full object-cover';
+            container.innerHTML = '';
+            container.appendChild(img);
+        } else if (!container) {
+            console.warn('music-cover-container not found in DOM.');
+        }
+
+    } catch (error) {
+        console.error("Error fetching music data:", error);
+    }
+}
+
+        // Function to fetch music data from Last.fm API
+//         async function fetchMusicData(artist, title) {
+//             // try {
+//             //     // Note: In a real app, you would need to sign up for an API key
+//             //     const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=album.getInfo&api_key=86e98f1783dd1af823523204bb2e2b4a&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(title)}&format=json`);
+//             //     const data = await response.json();
+                
+//             //     if (data.track) {
+                  
+                
+//              try {
+//             const apiKey = '86e98f1783dd1af823523204bb2e2b4a';
+//             const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(title)}&format=json`);
+//             const data = await response.json();
+
+//             if (!data || !data.album) {
+//                 console.warn('No album data found');
+//                 return;
+//             }
+
+//             const album = data.album;
+
+//             // Album Name
+//             document.getElementById('music-album').textContent = `Album: ${album.name || 'N/A'}`;
+
+//             // Artist
+//             document.getElementById('music-artist').textContent = `Artist: ${album.artist || 'N/A'}`;
+
+//             // Release Date (Last.fm doesn't always include it)
+//             //document.getElementById('music-release').textContent = `Release Date: N/A`;
+
+//             // Description
+//             const summary = data.wiki?.summary || data.track?.wiki?.content || 'No summary available.';
+//             document.getElementById('music-summary').textContent = summary.split('<')[0]; // Remove any HTML tags
+                    
+//                     if (data.track.album?.image?.[2]?.['#text']) {
+//                         const img = document.createElement('img');
+//                         img.src = data.track.album.image[2]['#text'];
+//                         img.alt = `${track} album cover`;
+//                         img.className = 'w-full h-full object-cover';
+//                         document.getElementById('music-cover-container').innerHTML = '';
+//                         document.getElementById('music-cover-container').appendChild(img);
+//                     }
+
+//        // Album Art
+// const desiredSizes = ["extralarge", "large", "medium"];
+// let albumImageUrl = "";
+
+// for (const size of desiredSizes) {
+//     const match = album.image.find(img => img.size === size && img['#text']);
+//     if (match) {
+//         albumImageUrl = match['#text'];
+//         break;
+//     }
+// }
+
+// if (albumImageUrl) {
+//     const img = document.createElement('img');
+//     img.src = albumImageUrl;
+//     img.alt = `${album.name} cover`;
+//     img.className = 'w-full h-full object-cover';
+//     const container = document.getElementById('music-cover-container');
+//     container.innerHTML = '';
+//     container.appendChild(img);
+// }
+//             } catch (error) {
+//                 console.error('Error fetching music data:', error);
+//             }
+//         }
+//     </script>
+// </body>
+// </html>

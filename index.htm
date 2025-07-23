@@ -57,7 +57,7 @@
     <!-- Header -->
     <header class="bg-gradient-to-r from-indigo-700 to-purple-600 text-white py-8">
         <div class="container mx-auto px-4">
-            <h1 class="title-font text-4xl md:text-5xl font-bold text-center mb-2">Culture Club Hub</h1>
+            <h1 class="title-font text-4xl md:text-5xl font-bold text-center mb-2">Club Hub</h1>
             <p class="text-center text-lg md:text-xl opacity-90">Where books, films, and music come together</p>
         </div>
     </header>
@@ -297,19 +297,39 @@
 
     <script>
         // Sample data - in a real app, this would come from your database
-        let clubData = {};
+        // let clubData = {};
 
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        const response = await fetch('clubs.json');
-        clubData = await response.json();
+       // Replace this with your actual SheetDB API endpoint
+        const sheetdbUrl = 'https://sheetdb.io/api/v1/ebdg1jebrc6wv';
+
+        // Optionally: You can filter or parse the data as needed
+        const response = await fetch(sheetdbUrl);
+        const rows = await response.json();
+        // Transform the flat rows into the object structure you need:
+        clubData = sheetRowsToClubData(rows);
         populateClubData();
+
     } catch (err) {
         console.error("Error loading club data:", err);
     }
 });
 
-
+    function sheetRowsToClubData(rows) {
+    // rows is an array of objects, each representing a row in your sheet
+    let obj = {
+        book: {},
+        movie: {},
+        music: {}
+    };
+    rows.forEach(row => {
+        if (row.type === "book") obj.book = row;
+        if (row.type === "movie") obj.movie = row;
+        if (row.type === "music") obj.music = row;
+    });
+    return obj;
+}
      function populateClubData() {
     // Book
     document.getElementById('book-title').textContent = clubData.book.title;

@@ -60,6 +60,9 @@
         <div id="club-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
+    <!-- Previous Clubs Section -->
+    <section id="previous-clubs" class="container mx-auto px-4 py-12"></section>
+
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-indigo-700 to-purple-600 text-white py-12 mt-16">
         <div class="container mx-auto px-4">
@@ -138,7 +141,9 @@
                 const response = await fetch(sheetdbUrl);
                 const rows = await response.json();
                 clubData = sheetRowsToClubData(rows);
+                const previousClubs = collectPreviousClubs(rows);
                 sortAndRenderClubCards();
+                renderPreviousClubs(previousClubs);
             } catch (err) {
                 console.error("Error loading club data:", err);
             }
@@ -152,6 +157,16 @@
                 if (row.type === "music") clubData.music = row;
             });
             return clubData;
+        }
+
+        function collectPreviousClubs(rows) {
+            const previous = { book: [], movie: [], music: [] };
+            rows.forEach(row => {
+                if (row.type === "bookss") previous.book.push(row);
+                if (row.type === "moviess") previous.movie.push(row);
+                if (row.type === "musics") previous.music.push(row);
+            });
+            return previous;
         }
 
         function parseDate(dateStr) {
@@ -369,9 +384,71 @@
             }
         }
 
+        function renderPreviousClubs(previousClubs) {
+            const section = document.getElementById('previous-clubs');
+            section.innerHTML = `
+                <h2 class="title-font text-3xl font-bold text-center mb-12">Previous Club Picks</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Club</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selector</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            ${renderPreviousRows(previousClubs)}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderPreviousRows(previousClubs) {
+            const allPrevious = [];
+            ['book', 'movie', 'music'].forEach(type => {
+                previousClubs[type].forEach(item => {
+                    allPrevious.push({ ...item, clubType: type });
+                });
+            });
+            allPrevious.sort((a, b) => {
+                const dateA = parseDate(a.date);
+                const dateB = parseDate(b.date);
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                return dateB - dateA; // Most recent first
+            });
+            const rows = [];
+            allPrevious.slice(0, 3).forEach(item => {
+                const config = cardConfigs[item.clubType];
+                rows.push(`
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="text-sm font-medium text-gray-900">${config.badge}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${item.title || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${item.selector || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${item.date || 'N/A'}</div>
+                        </td>
+                    </tr>
+                `);
+            });
+            return rows.join('');
+        }
+
         function searchGoogle(type, title, author = '') {
             let searchQuery = '';
-            
+
             if (type === 'book') {
                 searchQuery = author ? `${title} ${author} book` : `${title} book`;
             } else if (type === 'movie') {
@@ -379,7 +456,7 @@
             } else if (type === 'music') {
                 searchQuery = author ? `${title} ${author} album` : `${title} album`;
             }
-            
+
             const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
             window.open(googleUrl, '_blank');
         }

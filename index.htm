@@ -4,461 +4,601 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club Hub</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        book: { light: '#fef3c7', DEFAULT: '#d97706', dark: '#b45309' }, // Amber
+                        movie: { light: '#e0f2fe', DEFAULT: '#0ea5e9', dark: '#0369a1' }, // Sky
+                        music: { light: '#f3e8ff', DEFAULT: '#9333ea', dark: '#7e22ce' }, // Purple
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f5f2;
+            background-color: #f8fafc;
+            /* Subtle dot pattern */
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-        .title-font {
-            font-family: 'Playfair Display', serif;
+
+        /* Smooth Skeleton Loading Animation */
+        .skeleton {
+            background: #e2e8f0;
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.375rem;
         }
-        .book-card {
-            background: linear-gradient(135deg, #fff9f0 0%, #fff 100%);
-            border-left: 6px solid #d4a373;
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-        .movie-card {
-            background: linear-gradient(135deg, #f0f8ff 0%, #fff 100%);
-            border-left: 6px solid #4cc9f0;
-        }
-        .music-card {
-            background: linear-gradient(135deg, #f9f0ff 0%, #fff 100%);
-            border-left: 6px solid #b5179e;
+
+        .card-hover {
+            transition: all 0.3s ease;
         }
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #09f;
-            animation: spin 1s linear infinite;
+        
+        /* Custom Scrollbar for tables */
+        .custom-scroll::-webkit-scrollbar {
+            height: 8px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen flex flex-col text-slate-800">
+
     <!-- Header -->
-    <header class="bg-gradient-to-r from-indigo-700 to-purple-600 text-white py-8">
-        <div class="container mx-auto px-4">
-            <h1 class="title-font text-4xl md:text-5xl font-bold text-center mb-2">Club Hub</h1>
-            <p class="text-center text-lg md:text-xl opacity-90">Books, Movies & Music.</p>
+    <header class="bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="container mx-auto px-4 py-12 relative z-10 text-center">
+            <h1 class="font-serif text-5xl md:text-6xl font-bold mb-3 tracking-wide">Club Hub</h1>
+            <div class="h-1 w-24 bg-indigo-400 mx-auto mb-4 rounded-full"></div>
+            <p class="text-indigo-200 text-lg md:text-xl font-light tracking-wide">Books, Movies & Music</p>
         </div>
     </header>
+
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-12">
-        <h2 class="title-font text-3xl font-bold text-center mb-12">Upcoming Club Meetings</h2>
-        <!-- Cards will be rendered here -->
-        <div id="club-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"></div>
-    </main>
+    <main class="container mx-auto px-4 py-16 flex-grow">
+        <div class="text-center mb-12">
+            <h2 class="font-serif text-3xl md:text-4xl font-bold text-slate-800 mb-2">Upcoming Meetings</h2>
+            <p class="text-slate-500">See what's next on the schedule</p>
+        </div>
 
-    <!-- Previous Clubs Section -->
-    <section id="previous-clubs" class="container mx-auto px-4 py-12"></section>
-
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-indigo-700 to-purple-600 text-white py-12 mt-16">
-        <!-- <div class="container mx-auto px-4"> -->
-            <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"> -->
-                <!-- Club Info -->
-                <!-- <div class="text-center md:text-left"> -->
-                    <!-- <h3 class="title-font text-2xl font-bold mb-4">Club Hub</h3>
-                    <p class="text-purple-100 mb-4">Bringing together passionate readers, movie enthusiasts, and music lovers in one vibrant community.</p>
-                    <div class="flex justify-center md:justify-start space-x-4">
-                        <a href="#" class="text-purple-200 hover:text-white transition duration-300">
-                            <i class="fab fa-facebook-f text-xl"></i>
-                        </a>
-                        <a href="#" class="text-purple-200 hover:text-white transition duration-300">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-purple-200 hover:text-white transition duration-300">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-purple-200 hover:text-white transition duration-300">
-                            <i class="fab fa-discord text-xl"></i>
-                        </a>
-                    </div>
-                </div> -->
-
-                <!-- Quick Links -->
-                <!-- <div class="text-center">
-                    <h4 class="font-semibold text-lg mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-purple-200 hover:text-white transition duration-300 flex items-center justify-center"><i class="fas fa-book-open mr-2"></i>Book Club</a></li>
-                        <li><a href="#" class="text-purple-200 hover:text-white transition duration-300 flex items-center justify-center"><i class="fas fa-film mr-2"></i>Movie Club</a></li>
-                        <li><a href="#" class="text-purple-200 hover:text-white transition duration-300 flex items-center justify-center"><i class="fas fa-music mr-2"></i>Music Club</a></li>
-                        <li><a href="#" class="text-purple-200 hover:text-white transition duration-300 flex items-center justify-center"><i class="fas fa-calendar mr-2"></i>Schedule</a></li>
-                    </ul>
-                </div> -->
-
-                <!-- Contact Info -->
-                <!-- <div class="text-center md:text-right">
-                    <h4 class="font-semibold text-lg mb-4">Get In Touch</h4>
-                    <div class="space-y-2">
-                        <p class="text-purple-200 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-envelope mr-2"></i>
-                            hello@clubhub.com
-                        </p>
-                        <p class="text-purple-200 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-users mr-2"></i>
-                            Join our community
-                        </p>
-                        <p class="text-purple-200 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-heart mr-2"></i>
-                            Made with passion
-                        </p>
+        <!-- Cards Grid -->
+        <div id="club-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+            <!-- Loading Skeletons (Initial State) -->
+            <!-- These will be replaced by JS once data loads -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg h-96 flex flex-col gap-4">
+                <div class="skeleton h-8 w-1/3"></div>
+                <div class="skeleton h-6 w-3/4"></div>
+                <div class="flex-grow flex gap-4">
+                    <div class="skeleton w-1/3 h-full rounded-lg"></div>
+                    <div class="flex-grow flex flex-col gap-2">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-2/3"></div>
                     </div>
                 </div>
-            </div> -->
-
-            <!-- Bottom Bar -->
-            <div class="border-t border-purple-400 pt-6">
-                <div class="text-center">
-                    <p class="text-purple-200 text-lg font-semibold tracking-wider">
-                        Club Hub
-                    </p>
-                    <p class="text-purple-300 text-sm mt-1">
-                        Hubbing all of your clubs in one place.
-                    </p>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-lg h-96 flex flex-col gap-4">
+                <div class="skeleton h-8 w-1/3"></div>
+                <div class="skeleton h-6 w-3/4"></div>
+                <div class="flex-grow flex gap-4">
+                    <div class="skeleton w-1/3 h-full rounded-lg"></div>
+                    <div class="flex-grow flex flex-col gap-2">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-2/3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-lg h-96 flex flex-col gap-4">
+                <div class="skeleton h-8 w-1/3"></div>
+                <div class="skeleton h-6 w-3/4"></div>
+                <div class="flex-grow flex gap-4">
+                    <div class="skeleton w-1/3 h-full rounded-lg"></div>
+                    <div class="flex-grow flex flex-col gap-2">
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-full"></div>
+                        <div class="skeleton h-4 w-2/3"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
-       <script>
-        let clubData = {};
-        document.addEventListener('DOMContentLoaded', async function () {
-            try {
-                const sheetdbUrl = 'https://sheetdb.io/api/v1/ebdg1jebrc6wv';
-                const response = await fetch(sheetdbUrl);
-                const rows = await response.json();
-                clubData = sheetRowsToClubData(rows);
-                const previousClubs = collectPreviousClubs(rows);
-                sortAndRenderClubCards();
-                renderPreviousClubs(previousClubs);
-            } catch (err) {
-                console.error("Error loading club data:", err);
-            }
-        });
+    </main>
 
-        function sheetRowsToClubData(rows) {
-            const clubData = { book: {}, movie: {}, music: {} };
-            rows.forEach(row => {
-                if (row.type === "book") clubData.book = row;
-                if (row.type === "movie") clubData.movie = row;
-                if (row.type === "music") clubData.music = row;
-            });
-            return clubData;
-        }
-
-        function collectPreviousClubs(rows) {
-            const previous = { book: [], movie: [], music: [] };
-            rows.forEach(row => {
-                if (row.type === "bookss") previous.book.push(row);
-                if (row.type === "moviess") previous.movie.push(row);
-                if (row.type === "musics") previous.music.push(row);
-            });
-            return previous;
-        }
-
-        function parseDate(dateStr) {
-            if (!dateStr) return null;
-            const d = Date.parse(dateStr);
-            if (!isNaN(d)) return new Date(d);
-            const parts = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-            if (parts) {
-                const m = parseInt(parts[1], 10), day = parseInt(parts[2], 10), y = parseInt(parts[3], 10);
-                return new Date(y, m - 1, day);
-            }
-            return null;
-        }
-
-        const cardConfigs = {
-            book: {
-                badge: 'Book Club',
-                icon: 'fa-book-open',
-                color: 'amber',
-                fields: ['author', 'pages', 'year'],
-                descKey: 'description'
-            },
-            movie: {
-                badge: 'Movie Club',
-                icon: 'fa-film',
-                color: 'blue',
-                fields: ['director', 'runtime', 'year'],
-                descKey: 'plot'
-            },
-            music: {
-                badge: 'Music Club',
-                icon: 'fa-music',
-                color: 'purple',
-                fields: ['artist', 'album'],
-                descKey: 'summary'
-            }
-        };
-
-        function renderCard(type, data) {
-            const config = cardConfigs[type];
-            const div = document.createElement('div');
-            div.className = `${type}-card rounded-lg shadow-md p-6 transition duration-300 card-hover flex flex-col h-full`;
-            const fieldsHtml = config.fields.map(field =>
-                `<p class="text-sm text-gray-600" id="${type}-${field}">${field.charAt(0).toUpperCase() + field.slice(1)}: Loading...</p>`
-            ).join('');
-            const extra = type === 'book' ? data.author : type === 'music' ? data.artist : '';
-            div.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <div class="bg-${config.color}-100 text-${config.color}-800 text-xs font-semibold px-2.5 py-0.5 rounded-full inline-block mb-2">${config.badge}</div>
-                        <h3 class="title-font text-2xl font-bold mb-1">${data.title || 'Loading...'}</h3>
-                        <p class="text-gray-600">Selected by: <span class="font-medium">${data.selector || 'Loading...'}</span></p>
-                    </div>
-                    <div class="text-${config.color}-600 text-2xl"><i class="fas ${config.icon}"></i></div>
-                </div>
-                <div class="flex items-center mb-4">
-                    <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center mr-4 overflow-hidden" id="${type}-cover-container"><div class="loading-spinner"></div></div>
-                    <div>
-                        ${fieldsHtml}
-                    </div>
-                </div>
-                <div class="bg-${config.color}-50 p-3 rounded-lg mb-4 flex-grow"><p class="text-sm text-gray-700" id="${type}-${config.descKey}">Loading ${config.descKey}...</p></div>
-                <div class="flex justify-between items-center mt-auto">
-                    <div>
-                        <p class="text-xs text-gray-500">Next Meeting</p>
-                        <p class="font-semibold text-indigo-700">${data.date || 'TBD'}</p>
-                    </div>
-                    <button onclick="searchGoogle('${type}', '${data.title}', '${extra}')" class="bg-${config.color}-600 hover:bg-${config.color}-700 text-white px-4 py-2 rounded-full text-sm font-medium transition">More Info</button>
-                </div>
-            `;
-            return div;
-        }
-
-        function updateElements(type, updates) {
-            Object.entries(updates).forEach(([key, value]) => {
-                if (key === 'cover') {
-                    const container = document.getElementById(`${type}-cover-container`);
-                    if (container && value) {
-                        const img = document.createElement('img');
-                        img.src = value;
-                        img.alt = `${type} cover`;
-                        img.className = 'w-full h-full object-cover';
-                        container.innerHTML = '';
-                        container.appendChild(img);
-                    }
-                } else {
-                    const el = document.getElementById(`${type}-${key}`);
-                    if (el) {
-                        el.textContent = key === 'description' || key === 'plot' || key === 'summary' ? value : `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
-                    }
-                }
-            });
-        }
-
-        function sortAndRenderClubCards() {
-            const cards = [
-                {
-                    type: 'book',
-                    date: parseDate(clubData.book.date),
-                    data: clubData.book,
-                    fetch: (title, extra) => fetchBookData('book', title)
-                },
-                {
-                    type: 'movie',
-                    date: parseDate(clubData.movie.date),
-                    data: clubData.movie,
-                    fetch: (title, extra) => fetchMovieData('movie', title)
-                },
-                {
-                    type: 'music',
-                    date: parseDate(clubData.music.date),
-                    data: clubData.music,
-                    fetch: (title, extra) => fetchMusicData('music', title, extra)
-                }
-            ];
-            const today = new Date();
-            const validDates = cards.filter(c => c.date).length;
-            if (validDates === 0) {
-                const order = ['book', 'movie', 'music'];
-                cards.sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
-            } else {
-                cards.sort((a, b) => {
-                    if (!a.date && !b.date) return 0;
-                    if (!a.date) return 1;
-                    if (!b.date) return -1;
-                    const aDiff = Math.abs(a.date - today);
-                    const bDiff = Math.abs(b.date - today);
-                    return aDiff - bDiff;
-                });
-            }
-            const container = document.getElementById('club-cards');
-            container.innerHTML = '';
-            cards.forEach(card => {
-                const div = renderCard(card.type, card.data);
-                container.appendChild(div);
-                if (card.fetch) card.fetch(card.data.title, card.data.artist || '');
-            });
-        }
-
-
-        async function fetchBookData(type, title) {
-            try {
-                const response = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}`);
-                const data = await response.json();
-                if (!data.docs || data.docs.length === 0) {
-                    updateElements(type, { author: 'Unknown', pages: 'N/A', year: 'N/A', description: 'No description available.' });
-                    return;
-                }
-                const book = data.docs[0];
-                const author = book.author_name?.[0] || 'Unknown';
-                const pages = book.number_of_pages_median || 'N/A';
-                const year = book.first_publish_year || 'N/A';
-                let description = 'No description available.';
-                if (book.key) {
-                    const descRes = await fetch(`https://openlibrary.org${book.key}.json`);
-                    const descData = await descRes.json();
-                    const descText = descData.description?.value || descData.description || 'No description available.';
-                    const maxLength = 250;
-                    description = descText.length > maxLength ? descText.slice(0, maxLength).trim() + '...' : descText;
-                }
-                const cover = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg` : null;
-                updateElements(type, { author, pages, year, description, cover });
-            } catch (err) {
-                console.error("Book API error:", err);
-                updateElements(type, { author: 'Error', pages: 'Error', year: 'Error', description: 'Error loading description.' });
-            }
-        }
-        async function fetchMovieData(type, title) {
-            try {
-                const response = await fetch(`https://www.omdbapi.com/?apikey=7d308091&t=${encodeURIComponent(title)}`);
-                const data = await response.json();
-                if (data.Response === 'True') {
-                    const director = data.Director || 'Unknown';
-                    const runtime = data.Runtime || 'N/A';
-                    const year = data.Year || 'N/A';
-                    const plot = data.Plot || 'No plot available.';
-                    const cover = data.Poster && data.Poster !== 'N/A' ? data.Poster : null;
-                    updateElements(type, { director, runtime, year, plot, cover });
-                } else {
-                    updateElements(type, { director: 'Unknown', runtime: 'N/A', year: 'N/A', plot: 'No plot available.' });
-                }
-            } catch (error) {
-                console.error('Error fetching movie data:', error);
-                updateElements(type, { director: 'Error', runtime: 'Error', year: 'Error', plot: 'Error loading plot.' });
-            }
-        }
-        async function fetchMusicData(type, albumTitle, artist) {
-            try {
-                const apiKey = '86e98f1783dd1af823523204bb2e2b4a';
-                const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(albumTitle)}&format=json`);
-                const data = await response.json();
-                if (!data || !data.album) {
-                    updateElements(type, { artist: 'Unknown', album: 'N/A', summary: 'No description available.' });
-                    return;
-                }
-                const album = data.album;
-                const artistName = album.artist || 'Unknown';
-                const albumName = album.name || 'N/A';
-                const summary = album.wiki?.summary || 'No description available.';
-                const maxLength = 250;
-                const shortSummary = summary.length > maxLength ? summary.slice(0, maxLength).trim() + '...' : summary;
-                let cover = null;
-                const desiredSizes = ["extralarge", "large", "medium"];
-                for (const size of desiredSizes) {
-                    const match = album.image.find(img => img.size === size && img['#text']);
-                    if (match) {
-                        cover = match['#text'];
-                        break;
-                    }
-                }
-                updateElements(type, { artist: artistName, album: albumName, summary: shortSummary, cover });
-            } catch (error) {
-                console.error("Error fetching music data:", error);
-                updateElements(type, { artist: 'Error', album: 'Error', summary: 'Error loading summary.' });
-            }
-        }
-
-        function renderPreviousClubs(previousClubs) {
-            const section = document.getElementById('previous-clubs');
-            section.innerHTML = `
-                <h2 class="title-font text-3xl font-bold text-center mb-12">Previous Club Picks</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                        <thead class="bg-gray-50">
+    <!-- Previous Clubs Section -->
+    <section class="bg-white border-t border-slate-200 py-16 shadow-inner">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-3xl font-bold text-slate-800">Archive</h2>
+                <p class="text-slate-500 mt-1">Previous selections and history</p>
+            </div>
+            
+            <div id="previous-clubs-container" class="overflow-hidden bg-white rounded-xl shadow-lg border border-slate-100 max-w-5xl mx-auto">
+                <div class="overflow-x-auto custom-scroll">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Club</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selector</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Title</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Selector</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            ${renderPreviousRows(previousClubs)}
+                        <tbody id="previous-clubs-body" class="bg-white divide-y divide-slate-100 text-sm">
+                            <!-- Rows inserted by JS -->
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-slate-400">Loading history...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-            `;
-        }
+            </div>
+        </div>
+    </section>
 
-        function renderPreviousRows(previousClubs) {
-            const allPrevious = [];
-            ['book', 'movie', 'music'].forEach(type => {
-                previousClubs[type].forEach(item => {
-                    allPrevious.push({ ...item, clubType: type });
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <h3 class="font-serif text-2xl text-slate-200 font-bold tracking-wider">Club Hub</h3>
+                <p class="text-sm mt-2 opacity-60">Hubbing all of your clubs in one place.</p>
+            </div>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" class="hover:text-indigo-400 transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="hover:text-indigo-400 transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                <a href="#" class="hover:text-indigo-400 transition-colors"><i class="fab fa-discord text-xl"></i></a>
+            </div>
+            <p class="text-xs text-slate-600">&copy; 2024 Club Hub. Made with <i class="fas fa-heart text-red-900 mx-1"></i> for friends.</p>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Club Hub Application Logic
+         * Handles data fetching, processing, and rendering.
+         */
+        const App = {
+            config: {
+                sheetDbUrl: 'https://sheetdb.io/api/v1/ebdg1jebrc6wv',
+                omdbKey: '7d308091',
+                lastFmKey: '86e98f1783dd1af823523204bb2e2b4a'
+            },
+
+            // Mapping for UI elements based on club type
+            uiConfig: {
+                book: { 
+                    label: 'Book Club', 
+                    icon: 'fa-book-open', 
+                    colorClass: 'text-book bg-book-light border-book',
+                    btnClass: 'bg-book hover:bg-book-dark',
+                    fallbackImg: 'https://placehold.co/400x600/FFFbeb/d97706?text=No+Cover'
+                },
+                movie: { 
+                    label: 'Movie Club', 
+                    icon: 'fa-film', 
+                    colorClass: 'text-movie bg-movie-light border-movie',
+                    btnClass: 'bg-movie hover:bg-movie-dark',
+                    fallbackImg: 'https://placehold.co/400x600/e0f2fe/0ea5e9?text=No+Poster'
+                },
+                music: { 
+                    label: 'Music Club', 
+                    icon: 'fa-music', 
+                    colorClass: 'text-music bg-music-light border-music',
+                    btnClass: 'bg-music hover:bg-music-dark',
+                    fallbackImg: 'https://placehold.co/400x400/f3e8ff/9333ea?text=No+Art'
+                }
+            },
+
+            /**
+             * Initialize the application
+             */
+            async init() {
+                try {
+                    const response = await fetch(this.config.sheetDbUrl);
+                    if (!response.ok) throw new Error('Failed to fetch sheet data');
+                    const rows = await response.json();
+                    
+                    const data = this.processData(rows);
+                    this.renderCards(data.active);
+                    this.renderPreviousTable(data.previous);
+                    
+                    // Fetch external API details for active cards
+                    this.fetchDetails(data.active);
+
+                } catch (err) {
+                    console.error("Initialization Error:", err);
+                    document.getElementById('club-cards').innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-exclamation-circle text-4xl text-red-400 mb-4"></i>
+                            <p class="text-slate-600">Could not load club data. Please try again later.</p>
+                        </div>
+                    `;
+                }
+            },
+
+            /**
+             * Process raw sheet rows into structured data
+             */
+            processData(rows) {
+                const active = { book: {}, movie: {}, music: {} };
+                const previous = [];
+
+                rows.forEach(row => {
+                    // Active Clubs
+                    if (['book', 'movie', 'music'].includes(row.type)) {
+                        active[row.type] = { ...row, parsedDate: this.parseDate(row.date) };
+                    }
+                    // Previous Clubs
+                    else if (['bookss', 'moviess', 'musics'].includes(row.type)) {
+                        const cleanType = row.type.replace('ss', '').replace('cs', 'c'); // Normalize type names
+                        previous.push({
+                            ...row,
+                            displayType: cleanType,
+                            parsedDate: this.parseDate(row.date)
+                        });
+                    }
                 });
-            });
-            allPrevious.sort((a, b) => {
-                const dateA = parseDate(a.date);
-                const dateB = parseDate(b.date);
-                if (!dateA && !dateB) return 0;
-                if (!dateA) return 1;
-                if (!dateB) return -1;
-                return dateB - dateA; // Most recent first
-            });
-            const rows = [];
-            allPrevious.slice(0, 3).forEach(item => {
-                const config = cardConfigs[item.clubType];
-                rows.push(`
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="text-sm font-medium text-gray-900">${config.badge}</div>
+
+                return { active, previous };
+            },
+
+            /**
+             * Safe date parser
+             */
+            parseDate(dateStr) {
+                if (!dateStr) return null;
+                // Try standard parsing first
+                const d = new Date(dateStr);
+                if (!isNaN(d.getTime())) return d;
+                
+                // Try manual parsing for DD-MM-YYYY or similar
+                const parts = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+                if (parts) {
+                    // Assuming MM/DD/YYYY or DD/MM/YYYY depending on locale, 
+                    // sticking to simple assumption: Month/Day/Year or try swapping if invalid
+                    return new Date(parts[3], parts[1] - 1, parts[2]);
+                }
+                return null;
+            },
+
+            /**
+             * Render the main cards
+             */
+            renderCards(activeData) {
+                const container = document.getElementById('club-cards');
+                container.innerHTML = '';
+
+                // Convert object to array and sort by date
+                const cards = Object.entries(activeData).map(([type, data]) => ({ type, ...data }));
+                const today = new Date();
+
+                cards.sort((a, b) => {
+                    if (!a.parsedDate && !b.parsedDate) return 0;
+                    if (!a.parsedDate) return 1;
+                    if (!b.parsedDate) return -1;
+                    // Sort by closest upcoming date
+                    const diffA = Math.abs(a.parsedDate - today);
+                    const diffB = Math.abs(b.parsedDate - today);
+                    return diffA - diffB;
+                });
+
+                cards.forEach(card => {
+                    const ui = this.uiConfig[card.type];
+                    const dateDisplay = card.date || 'TBD';
+                    const selector = card.selector || 'TBD';
+                    const title = card.title || 'To Be Announced';
+                    
+                    // Determine which extra field to show initially (Author/Director/Artist)
+                    let subTitle = '';
+                    if (card.type === 'book') subTitle = card.author;
+                    else if (card.type === 'music') subTitle = card.artist;
+                    else if (card.type === 'movie') subTitle = 'Loading director...'; // OMDB fetches this
+
+                    const html = `
+                        <article class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex flex-col h-full card-hover relative group" id="card-${card.type}">
+                            <!-- Top Decor Bar -->
+                            <div class="h-2 w-full ${ui.btnClass}"></div>
+                            
+                            <div class="p-6 flex flex-col h-full">
+                                <!-- Header -->
+                                <div class="flex justify-between items-start mb-6">
+                                    <div>
+                                        <span class="${ui.colorClass} text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border bg-opacity-50">
+                                            <i class="fas ${ui.icon} mr-1"></i> ${ui.label}
+                                        </span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-xs text-slate-400 uppercase font-semibold tracking-wider">Meeting</div>
+                                        <div class="font-bold text-slate-700">${dateDisplay}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Content Grid -->
+                                <div class="flex gap-5 mb-6">
+                                    <!-- Image Container with Aspect Ratio -->
+                                    <div class="w-1/3 flex-shrink-0">
+                                        <div class="relative w-full rounded-lg overflow-hidden shadow-md bg-slate-200 aspect-[2/3]">
+                                            <img id="img-${card.type}" 
+                                                 src="${ui.fallbackImg}" 
+                                                 alt="${title}" 
+                                                 class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                                                 onload="this.classList.remove('opacity-0')"
+                                                 onerror="this.src='${ui.fallbackImg}'; this.classList.remove('opacity-0')"
+                                            >
+                                            <!-- Skeleton Overlay -->
+                                            <div id="skeleton-${card.type}" class="absolute inset-0 skeleton z-10"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Text Info -->
+                                    <div class="w-2/3 flex flex-col justify-center">
+                                        <h3 class="font-serif text-2xl font-bold text-slate-800 leading-tight mb-1 line-clamp-2" title="${title}">${title}</h3>
+                                        <p class="text-sm font-medium text-slate-500 mb-3" id="subtitle-${card.type}">${subTitle || ''}</p>
+                                        
+                                        <div class="text-xs text-slate-400 mt-auto">
+                                            <p class="uppercase tracking-wider font-semibold mb-1">Selected By</p>
+                                            <div class="flex items-center">
+                                                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 mr-2 text-[10px]">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <span class="text-slate-600 font-medium">${selector}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Details Area -->
+                                <div class="bg-slate-50 rounded-xl p-4 mb-6 flex-grow text-sm text-slate-600 leading-relaxed border border-slate-100">
+                                    <div id="desc-${card.type}" class="line-clamp-4">
+                                        <div class="skeleton h-3 w-full mb-2 rounded"></div>
+                                        <div class="skeleton h-3 w-5/6 mb-2 rounded"></div>
+                                        <div class="skeleton h-3 w-4/6 rounded"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Button -->
+                                <button onclick="App.searchGoogle('${card.type}', '${title.replace(/'/g, "\\'")}', '${(subTitle || '').replace(/'/g, "\\'")}')" 
+                                    class="w-full py-3 rounded-xl text-white font-medium text-sm shadow-md transition-colors ${ui.btnClass} flex items-center justify-center group-hover:shadow-lg">
+                                    <span>More Info</span>
+                                    <i class="fas fa-arrow-right ml-2 text-xs opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                                </button>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">${item.title || 'N/A'}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">${item.selector || 'N/A'}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">${item.date || 'N/A'}</div>
-                        </td>
-                    </tr>
-                `);
-            });
-            return rows.join('');
-        }
+                        </article>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                });
+            },
 
-        function searchGoogle(type, title, author = '') {
-            let searchQuery = '';
+            /**
+             * Fetch external data for all cards
+             */
+            fetchDetails(activeData) {
+                // Book
+                if (activeData.book && activeData.book.title) {
+                    this.fetchBook(activeData.book.title);
+                }
+                // Movie
+                if (activeData.movie && activeData.movie.title) {
+                    this.fetchMovie(activeData.movie.title);
+                }
+                // Music
+                if (activeData.music && activeData.music.title) {
+                    this.fetchMusic(activeData.music.title, activeData.music.artist);
+                }
+            },
 
-            if (type === 'book') {
-                searchQuery = author ? `${title} ${author} book` : `${title} book`;
-            } else if (type === 'movie') {
-                searchQuery = `${title} movie`;
-            } else if (type === 'music') {
-                searchQuery = author ? `${title} ${author} album` : `${title} album`;
+            async fetchBook(title) {
+                const type = 'book';
+                try {
+                    const res = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}`);
+                    const data = await res.json();
+                    
+                    if (data.docs && data.docs.length > 0) {
+                        const book = data.docs[0];
+                        const coverUrl = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : null;
+                        
+                        // Fetch Description
+                        let desc = 'No description available.';
+                        if (book.key) {
+                            try {
+                                const descRes = await fetch(`https://openlibrary.org${book.key}.json`);
+                                const descData = await descRes.json();
+                                desc = typeof descData.description === 'string' ? descData.description : descData.description?.value || desc;
+                            } catch (e) { console.warn('Book description failed'); }
+                        }
+
+                        this.updateUI(type, {
+                            cover: coverUrl,
+                            subtitle: book.author_name?.[0],
+                            description: desc,
+                            meta: `${book.number_of_pages_median || '?'} pages • ${book.first_publish_year || 'Unknown'}`
+                        });
+                    } else {
+                        this.removeSkeleton(type); // Just clear skeleton if no data
+                    }
+                } catch (e) {
+                    console.error('Book API Error', e);
+                    this.removeSkeleton(type);
+                }
+            },
+
+            async fetchMovie(title) {
+                const type = 'movie';
+                try {
+                    const res = await fetch(`https://www.omdbapi.com/?apikey=${this.config.omdbKey}&t=${encodeURIComponent(title)}`);
+                    const data = await res.json();
+
+                    if (data.Response === 'True') {
+                        this.updateUI(type, {
+                            cover: data.Poster !== 'N/A' ? data.Poster : null,
+                            subtitle: data.Director,
+                            description: data.Plot,
+                            meta: `${data.Runtime} • ${data.Year}`
+                        });
+                    } else {
+                        this.removeSkeleton(type);
+                    }
+                } catch (e) {
+                    console.error('Movie API Error', e);
+                    this.removeSkeleton(type);
+                }
+            },
+
+            async fetchMusic(album, artist) {
+                const type = 'music';
+                try {
+                    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=${this.config.lastFmKey}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}&format=json`);
+                    const data = await res.json();
+
+                    if (data.album) {
+                        const img = data.album.image.find(i => i.size === 'extralarge') || data.album.image.find(i => i.size === 'large');
+                        const summary = data.album.wiki?.summary ? data.album.wiki.summary.replace(/<a.*?>.*?<\/a>/g, '') : 'No summary available.';
+
+                        this.updateUI(type, {
+                            cover: img ? img['#text'] : null,
+                            subtitle: data.album.artist,
+                            description: summary,
+                            meta: 'Album'
+                        });
+                    } else {
+                        this.removeSkeleton(type);
+                    }
+                } catch (e) {
+                    console.error('Music API Error', e);
+                    this.removeSkeleton(type);
+                }
+            },
+
+            /**
+             * Updates the DOM elements for a card and removes skeletons
+             */
+            updateUI(type, data) {
+                if (data.cover) {
+                    const img = document.getElementById(`img-${type}`);
+                    if(img) img.src = data.cover;
+                }
+                
+                this.removeSkeleton(type);
+
+                if (data.subtitle) {
+                    const el = document.getElementById(`subtitle-${type}`);
+                    if(el) el.textContent = data.subtitle;
+                }
+                
+                if (data.description) {
+                    const el = document.getElementById(`desc-${type}`);
+                    // Truncate description cleanly
+                    const maxLength = 180;
+                    let cleanDesc = data.description.length > maxLength 
+                        ? data.description.substring(0, maxLength).trim() + '...' 
+                        : data.description;
+                    
+                    // Add meta info if available (Pages/Runtime)
+                    if (data.meta) {
+                        cleanDesc += `<br><br><span class="text-xs font-semibold uppercase tracking-wide text-slate-400">${data.meta}</span>`;
+                    }
+                    
+                    if(el) el.innerHTML = cleanDesc;
+                }
+            },
+
+            removeSkeleton(type) {
+                const skel = document.getElementById(`skeleton-${type}`);
+                if (skel) skel.classList.add('hidden');
+                
+                const desc = document.getElementById(`desc-${type}`);
+                if (desc && desc.querySelector('.skeleton')) {
+                    desc.innerHTML = 'Description unavailable.';
+                }
+            },
+
+            /**
+             * Render the Previous Clubs table
+             */
+            renderPreviousTable(previousData) {
+                const tbody = document.getElementById('previous-clubs-body');
+                if (previousData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">No history found.</td></tr>';
+                    return;
+                }
+
+                // Sort by date descending (newest first)
+                previousData.sort((a, b) => {
+                    const da = a.parsedDate || new Date(0);
+                    const db = b.parsedDate || new Date(0);
+                    return db - da;
+                });
+
+                tbody.innerHTML = previousData.map(item => {
+                    const ui = this.uiConfig[item.displayType] || { label: item.displayType, icon: 'fa-circle', colorClass: 'text-gray-500 bg-gray-100' };
+                    
+                    return `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ui.colorClass} bg-opacity-30">
+                                    <i class="fas ${ui.icon} mr-1.5"></i> ${ui.label}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-slate-900">${item.title || '-'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-slate-500">${item.selector || '-'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                ${item.date || '-'}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+
+            searchGoogle(type, title, extra) {
+                let query = `${title}`;
+                if (type === 'book') query += ` book ${extra || ''}`;
+                else if (type === 'movie') query += ` movie`;
+                else if (type === 'music') query += ` album ${extra || ''}`;
+                
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
             }
+        };
 
-            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
-            window.open(googleUrl, '_blank');
-        }
-
+        // Start App on Load
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
